@@ -1,0 +1,327 @@
+definitions:
+  param.ADDArticleParam:
+    properties:
+      content:
+        maxLength: 65535
+        type: string
+      created_by:
+        type: string
+      desc:
+        maxLength: 255
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        type: integer
+      tag_id:
+        type: integer
+      title:
+        maxLength: 100
+        type: string
+    required:
+    - content
+    - created_by
+    - desc
+    - state
+    - tag_id
+    - title
+    type: object
+  param.AddTagParam:
+    properties:
+      created_by:
+        maxLength: 100
+        type: string
+      name:
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - created_by
+    - name
+    - state
+    type: object
+  param.AuthParam:
+    properties:
+      password:
+        maxLength: 50
+        type: string
+      username:
+        maxLength: 50
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  param.EditArticleParam:
+    properties:
+      content:
+        type: string
+      desc:
+        type: string
+      modified_by:
+        maxLength: 100
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        type: integer
+      tag_id:
+        type: integer
+      title:
+        type: string
+    required:
+    - content
+    - desc
+    - modified_by
+    - state
+    - tag_id
+    - title
+    type: object
+  param.EditTagParam:
+    properties:
+      modified_by:
+        maxLength: 100
+        type: string
+      name:
+        maxLength: 20
+        type: string
+      state:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - modified_by
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/articles:
+    get:
+      parameters:
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Tag ID
+        in: query
+        name: id
+        type: integer
+      - description: State
+        in: query
+        name: state
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"token":},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取全部文章
+    post:
+      parameters:
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Article Info
+        in: body
+        name: info
+        required: true
+        schema:
+          $ref: '#/definitions/param.ADDArticleParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"token":},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 添加文章
+  /api/v1/articles/{id}:
+    delete:
+      parameters:
+      - description: Article ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"error"}'
+          schema:
+            type: string
+      summary: 删除文章
+    get:
+      parameters:
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Article ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"token":},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取指定文章
+    put:
+      parameters:
+      - description: ArticleID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Article Info
+        in: body
+        name: info
+        required: true
+        schema:
+          $ref: '#/definitions/param.EditArticleParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"token":},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 修改文章
+  /api/v1/tags:
+    get:
+      parameters:
+      - description: TagName
+        in: query
+        name: name
+        type: string
+      - description: TagState
+        in: query
+        name: state
+        type: integer
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"token":},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取全部tag
+    post:
+      parameters:
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Tag Info
+        in: body
+        name: '"info"'
+        required: true
+        schema:
+          $ref: '#/definitions/param.AddTagParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"error"}'
+          schema:
+            type: string
+      summary: 添加tag
+  /api/v1/tags/{id}:
+    delete:
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"token":},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 删除tag
+    put:
+      parameters:
+      - description: TagID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: Tag Info
+        in: body
+        name: '"info"'
+        required: true
+        schema:
+          $ref: '#/definitions/param.EditTagParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"token":},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 修改tag
+  /auth:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Account
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/param.AuthParam'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"token":},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取token
+swagger: "2.0"
