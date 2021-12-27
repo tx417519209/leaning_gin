@@ -7,69 +7,64 @@ import (
 	"github.com/go-ini/ini"
 )
 
-var (
-	Cfg           *ini.File
-	RunMode       string
-	HTTPPort      int
-	ReadTimeout   time.Duration
-	WriteTimeout  time.Duration
-	PageSize      int
-	JwtSecret     string
-	JwtIssuer     string
-	DBType        string
-	DBName        string
-	DBUser        string
-	DBPwd         string
-	DBHost        string
-	DBTablePrefix string
-)
+type App struct {
+	JwtSecret       string
+	JwtIssuer       string
+	PageSize        int
+	RuntimeRootPath string
+	ImagePrefixUrl  string
+	ImageSavePath   string
+	ImageMaxSize    int64
+	ImageAllowExts  []string
+	LogSavePath     string
+	LogSaveName     string
+	LogFileExt      string
+	LogTimeFormat   string
+}
 
-func init() {
-	var err error
-	Cfg, err = ini.Load("conf/app.ini")
+var AppSetting = &App{}
+
+type Server struct {
+	RunMode      string
+	Host         string
+	HttpPort     int
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+}
+
+var ServerSetting = &Server{}
+
+type Database struct {
+	Type        string
+	User        string
+	Password    string
+	Host        string
+	Name        string
+	TablePrefix string
+}
+
+var DatabaseSetting = &Database{}
+
+func Setup() {
+	cfg, err := ini.Load("conf/app.ini")
 	if err != nil {
 		log.Fatalf("Failed to parse 'conf/app.ini':%s", err.Error())
 	}
-	LoadBase()
-	LoadServer()
-	LoadApp()
-	LoadDataBase()
-}
-
-func LoadBase() {
-	RunMode = Cfg.Section("").Key("RUN_MODE").MustString("debug")
-}
-
-func LoadServer() {
-	sec, err := Cfg.GetSection("server")
+	err = cfg.Section("app").MapTo(AppSetting)
 	if err != nil {
-		log.Fatalf("Failed to get section 'server':%s", err.Error())
+		log.Fatalf("Failed to mapto  AppSetting :%s ", err.Error())
 	}
-	HTTPPort = sec.Key("HTTP_PORT").MustInt(9000)
+	AppSetting.ImageMaxSize = AppSetting.ImageMaxSize * 1024 * 1024
 
-	ReadTimeout = time.Duration(sec.Key("READ_TIMEOUT").MustInt(60)) * time.Second
-	WriteTimeout = time.Duration(sec.Key("WRITE_TIMEOUT").MustInt(60)) * time.Second
-
-}
-func LoadDataBase() {
-	sec, err := Cfg.GetSection("database")
+	err = cfg.Section("server").MapTo(ServerSetting)
 	if err != nil {
-		log.Fatal(2, "Fail to get section 'database': %v", err)
+		log.Fatalf("Failed to mapto  ServerSetting :%s ", err.Error())
 	}
-	DBType = sec.Key("TYPE").String()
-	DBName = sec.Key("NAME").String()
-	DBUser = sec.Key("USER").String()
-	DBPwd = sec.Key("PASSWORD").String()
-	DBHost = sec.Key("HOST").String()
-	DBTablePrefix = sec.Key("TABLE_PREFIX").String()
-}
+	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
+	ServerSetting.WriteTimeout = ServerSetting.ReadTimeout * time.Second
 
-func LoadApp() {
-	sec, err := Cfg.GetSection("app")
+	err = cfg.Section("database").MapTo(DatabaseSetting)
 	if err != nil {
-		log.Fatalf("Fail to get section 'app': %v", err)
+		log.Fatalf("Cfg.MapTo DatabaseSetting err: %v", err)
 	}
-	JwtSecret = sec.Key("JWT_SECRET").MustString("!@)*#)!@U#@*!@!)")
-	JwtIssuer = sec.Key("JWT_ISSUER").MustString("xing")
-	PageSize = sec.Key("PAGE_SIZE").MustInt(10)
 }

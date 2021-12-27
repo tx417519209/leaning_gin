@@ -65,7 +65,7 @@ func GetArticles(c *gin.Context) {
 				maps["tag_id"] = *(param.TagID)
 			}
 		}
-		data["lists"] = models.GetArticles(util.GetPage(c), setting.PageSize, maps)
+		data["lists"] = models.GetArticles(util.GetPage(c), setting.AppSetting.PageSize, maps)
 		data["total"] = models.GetArticleTotal(maps)
 	}
 	c.JSON(http.StatusOK, gin.H{

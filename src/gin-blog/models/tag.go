@@ -17,9 +17,6 @@ func GetTagTotal(maps interface{}) (count int64) {
 	db.Model(&Tag{}).Where(maps).Count(&count)
 	return
 }
-func init() {
-	db.AutoMigrate(&Tag{})
-}
 
 func ExistTagByName(name string) bool {
 	var tag Tag

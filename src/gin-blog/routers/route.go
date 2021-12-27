@@ -6,7 +6,7 @@ import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	_ "xing.learning.gin/src/gin-blog/docs"
 	"xing.learning.gin/src/gin-blog/middleware/jwt"
-	"xing.learning.gin/src/gin-blog/pkg/setting"
+	"xing.learning.gin/src/gin-blog/pkg/upload"
 	"xing.learning.gin/src/gin-blog/routers/api"
 	v1 "xing.learning.gin/src/gin-blog/routers/api/v1"
 )
@@ -15,10 +15,11 @@ func InitRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	gin.SetMode(setting.RunMode)
 	r.Static("/html", "./public")
+	r.StaticFS("/upload/images", gin.Dir(upload.GetImageFullPath(), false))
 	r.POST("/auth", api.GetAuth)
 	r.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
+	r.POST("/upload", api.UploadImage)
 	apiv1 := r.Group("/api/v1")
 	apiv1.Use(jwt.JWT())
 	{

@@ -11,6 +11,3 @@ func CheckAuth(username, password string) bool {
 	db.Model(&Auth{}).Where(&Auth{UserName: username, Password: password}).First(&auth)
 	return auth.ID > 0
 }
-func init() {
-	db.AutoMigrate(&Auth{})
-}

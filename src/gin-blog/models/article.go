@@ -25,10 +25,6 @@ func GetArticleTotal(maps interface{}) (count int64) {
 	return
 }
 
-func init() {
-	db.AutoMigrate(&Article{})
-}
-
 func AddArticle(data map[string]interface{}) bool {
 	db.Create(&Article{
 		TagID:     data["tag_id"].(int),
@@ -58,8 +54,4 @@ func EditArticle(id int, datas map[string]interface{}) bool {
 	article.ID = id
 	db.Model(&article).Updates(datas)
 	return true
-}
-
-func init() {
-	db.AutoMigrate(&Article{})
 }

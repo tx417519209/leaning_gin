@@ -7,12 +7,11 @@ import (
 	"xing.learning.gin/src/gin-blog/pkg/setting"
 )
 
-var jwtSecret = setting.JwtSecret
-var issuer = setting.JwtIssuer
+var jwtSecret = setting.AppSetting.JwtSecret
+var issuer = setting.AppSetting.JwtIssuer
 
 type CustomClaims struct {
 	UserName string `json:"username"`
-	PassWord string `json:"password"`
 	jwt.StandardClaims
 }
 
@@ -22,7 +21,6 @@ func GenerateToken(username, password string) (string, error) {
 
 	claims := CustomClaims{
 		username,
-		password,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 		},
